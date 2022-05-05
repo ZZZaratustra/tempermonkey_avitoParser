@@ -19,5 +19,4 @@ var DEBUG_MODE = 1;
 
 var userID = 1;
 var versionID=2;
-var backendApi = 'https://a.unirenter.ru/b24/api/avito.php?do=avitoParser&ah=';
 var hash = '';

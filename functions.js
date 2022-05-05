@@ -1,3 +1,19 @@
+const backendApi = 'https://a.unirenter.ru/b24/api/avito.php?do=avitoParser&ah=';
+const version = 1;
+
+let updates = {
+    '05.03.2022': [
+        '- Добавил version ко всем запросам',
+        '- Добавил вывод обновлений в консоль',
+    ]
+};
+
+console.log(`VERSION: ${version}`);
+for(let i in updates){
+    console.info(`Обновление от ${i}\n`, updates[i].join("\n"));
+    // console.log(updates[i].join("\n"));
+}
+
 let elementCreatedInerations = 0;
 let elementCreatedStatus = true;
 
@@ -41,7 +57,7 @@ async function error(error, avitoId = false){
         avitoId = r.avitoID;
     }
 
-    let res = await ajax(backendApi + hash, {avitoId: avitoId, statusCode: error});
+    let res = await ajax(backendApi + hash + '&vesrion=' + version, {avitoId: avitoId, statusCode: error});
     getItem(res);
 }
 

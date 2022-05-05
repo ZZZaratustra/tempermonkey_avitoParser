@@ -75,7 +75,7 @@ async function getItem(args = {}) {
     let item = {};
     if (Object.keys(args) == 0) {
         // item = await getItem();
-        let response = await fetch(backendApi + hash);
+        let response = await fetch(backendApi + hash + '&version=' + version);
         item = await response.json();
         console.log('Данные для парсинга получены после GET запроса');
     } else {
@@ -247,8 +247,12 @@ async function parse(debug = false) {
     if(!debug){
         res['avitoId'] = elementToParse.avitoID;
         res['statusCode'] = 'productCard';
-        // getItem();
-        let result = ajax(backendApi + hash, res);
+        let result = ajax(backendApi + hash + '&version=' + version, res);
+
+        console.log('Парсинг завершён. Данные отправлены на сервер');
+        console.log('Ждём 2 секунды и идём дальше');
+        await timeout(2000);
+        getItem();
     }
 
 
