@@ -1,0 +1,23 @@
+// ==UserScript==
+// @name         template 1.0
+// @namespace    http://tampermonkey.net/
+// @version      1.0
+// @description  Мое описание
+// @author       You
+// @match        https://*.avito.ru/*
+// @grant        none
+// @require      https://code.jquery.com/jquery-3.4.1.min.js
+// @require      https://cdn.jsdelivr.net/npm/jquery.growl@1.3.5/javascripts/jquery.growl.min.js
+// @require      https://raw.githubusercontent.com/urtvs/tempermonkey_avitoParser/main/functions.js
+// @require      https://raw.githubusercontent.com/urtvs/tempermonkey_avitoParser/main/app.js
+
+// @run-at document-end
+// ==/UserScript==
+
+// Режим отладки. 0 - отключен; 1 - включен
+var DEBUG_MODE = 1;
+
+var userID = 1;
+var versionID=2;
+var backendApi = 'https://a.unirenter.ru/b24/api/avito.php?do=avitoParser&ah=';
+var hash = '';

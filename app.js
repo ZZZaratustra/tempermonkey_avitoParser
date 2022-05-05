@@ -67,6 +67,7 @@ function stop() {
 function debug() {
     console.log('Нажата кнопка дебаг режима');
     localStorage.setItem('started', false);
+    localStorage.removeItem('avitoParse');
     parse(true);
 }
 
@@ -74,7 +75,7 @@ async function getItem(args = {}) {
     let item = {};
     if (Object.keys(args) == 0) {
         // item = await getItem();
-        let response = await fetch(backendApi);
+        let response = await fetch(backendApi + hash);
         item = await response.json();
         console.log('Данные для парсинга получены после GET запроса');
     } else {
@@ -127,7 +128,15 @@ function automaticParse() {
 }
 
 async function parse(debug = false) {
-    let item = JSON.parse(localStorage.getItem('avitoParse'));
+    let elementToParse = JSON.parse(localStorage.getItem('avitoParse'));
+
+    if(elementToParse === null){
+        elementToParse = {avitoID: false};
+    }
+
+    if(Object.keys(elementToParse) == 0){
+        elementToParse = {avitoID: false};
+    }
 
     //На всякий случай ждём 2 секунду
     await timeout(2000);
@@ -139,7 +148,7 @@ async function parse(debug = false) {
         return;
     }
 
-    if(item.avitoID){
+    if(elementToParse.avitoID){
         let announcementId = await elementCreated('[data-marker="item-view/item-id"]');
         if(elementCreatedStatus !== true){
             console.error('Не удалось найти ID объявления');
@@ -147,7 +156,7 @@ async function parse(debug = false) {
         }
         announcementId = announcementId.text().replace('№', '').trim();
 
-        if(item.avitoID != announcementId){
+        if(elementToParse.avitoID != announcementId){
             console.error('ID не совпадает с полученым по API');
             if (!debug) {
                 error('noProductCard');
@@ -236,10 +245,10 @@ async function parse(debug = false) {
 
     //отправляем данные на сервере, если мы не в дебаге
     if(!debug){
-        res['avitoId'] = item.avitoID;
+        res['avitoId'] = elementToParse.avitoID;
         res['statusCode'] = 'productCard';
         // getItem();
-        let result = ajax(backendApi, res);
+        let result = ajax(backendApi + hash, res);
     }
 
 

@@ -1,4 +1,3 @@
-const backendApi = 'https://a.unirenter.ru/b24/api/avito.php?do=avitoParser&ah=9bae926779705bce2a7d96ae0cf2f2c8';
 let elementCreatedInerations = 0;
 let elementCreatedStatus = true;
 
@@ -42,7 +41,7 @@ async function error(error, avitoId = false){
         avitoId = r.avitoID;
     }
 
-    let res = await ajax(backendApi, {avitoId: avitoId, statusCode: error});
+    let res = await ajax(backendApi + hash, {avitoId: avitoId, statusCode: error});
     getItem(res);
 }
 
