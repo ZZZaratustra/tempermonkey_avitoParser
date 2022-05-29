@@ -1,10 +1,26 @@
-const backendApi = 'https://a.unirenter.ru/b24/api/avito.php?do=avitoParser&ah=';
-const version = 1;
+let seconds = 0;
+setInterval(async () => {
+    seconds++;
+    if(seconds == 40){
+        console.error('Не было совершенно действий в течение 40 секунд. Обновление страницы');
+        await timeout(2000);
+        openLink(window.location.href);
+    }
+}, 1000);
+
+const backendApi = 'https://a.unirenter.ru/b24/api/avito.php?do=avitoParser';
+const version = 5;
 
 let updates = {
-    '05.03.2022': [
+    '05.05.2022': [
         '- Добавил version ко всем запросам',
         '- Добавил вывод обновлений в консоль',
+    ],
+    '23.05.2022': [
+        '- Опциональные параметры',
+        '- Сбор города и цены',
+        '- Опциональный тайм-аут после завершения парсинга',
+        '- Таймер 40 секунд на совершение действий'
     ]
 };
 
@@ -57,7 +73,7 @@ async function error(error, avitoId = false){
         avitoId = r.avitoID;
     }
 
-    let res = await ajax(backendApi + hash + '&vesrion=' + version, {avitoId: avitoId, statusCode: error});
+    let res = await ajax(backendApi + queryArgsString, {avitoId: avitoId, statusCode: error});
     getItem(res);
 }
 

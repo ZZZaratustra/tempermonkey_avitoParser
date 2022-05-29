@@ -1,4 +1,10 @@
+let queryArgsString = '';
 $(document).ready(() => {
+    for(let r in queryArgs){
+        queryArgsString += `&${r}=${queryArgs[r]}`;
+    }
+    queryArgsString += `&version=${version}`
+    
     menu();
 });
 
@@ -75,9 +81,15 @@ async function getItem(args = {}) {
     let item = {};
     if (Object.keys(args) == 0) {
         // item = await getItem();
-        let response = await fetch(backendApi + hash + '&version=' + version);
-        item = await response.json();
-        console.log('Данные для парсинга получены после GET запроса');
+        try {
+            let response = await fetch(backendApi + queryArgsString);
+            item = await response.json();
+            console.log('Данные для парсинга получены после GET запроса');
+        } catch (e) {
+            console.error('Ошибка при получении данных с сервера. Обновление страницы через 3 секунды');
+            await timeout(3000);
+            window.location.href = window.location.href;
+        }
     } else {
         item = args;
         console.log('Данные для парсинга получены после POST запроса');
@@ -214,6 +226,10 @@ async function parse(debug = false) {
     //Название профиля
     let profileName = $('[data-marker="seller-info/name"]').find('a').text().trim().replace('\n', '');
     let profileUrl = $('[data-marker="seller-info/name"]').find('a').attr('href');
+    //Город
+    let city = $('[itemprop="name"]:eq(0)').text();
+    //Цена
+    let price = $('.js-item-price').attr('content');
 
     let profileID = getProfileId(profileUrl, isCompany);
 
@@ -237,7 +253,9 @@ async function parse(debug = false) {
         profileName: profileName,
         profileUrl: profileUrl,
         profileID: profileID,
-        numAdv: Number(numAdv)
+        numAdv: Number(numAdv),
+        city: city,
+        price: price,
     };
 
     console.log('Сбор данных завершён');
@@ -247,11 +265,11 @@ async function parse(debug = false) {
     if(!debug){
         res['avitoId'] = elementToParse.avitoID;
         res['statusCode'] = 'productCard';
-        let result = ajax(backendApi + hash + '&version=' + version, res);
+        let result = ajax(backendApi + queryArgsString, res);
 
         console.log('Парсинг завершён. Данные отправлены на сервер');
-        console.log('Ждём 2 секунды и идём дальше');
-        await timeout(2000);
+        console.log('Ждём ' + timeoutAfterParse + ' секунды и идём дальше');
+        await timeout(timeoutAfterParse * 1000);
         getItem();
     }
 
@@ -261,6 +279,9 @@ async function parse(debug = false) {
 function setItem(object = {}) {
     localStorage.setItem('avitoParse', JSON.stringify(object));
 }
-function openLink(url) {
-    window.location.href = url;
+async function openLink(url) {
+    // window.location.href = url;
+    window.open(url);
+    await(500);
+    window.close();
 }
